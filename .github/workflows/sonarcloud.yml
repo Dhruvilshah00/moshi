@@ -12,18 +12,18 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@a5ac7e0b9e9dbcae7f4cc2ac9e7e31e3b7f24f5d
         with:
           fetch-depth: 0
 
       - name: Set up JDK 17
-        uses: actions/setup-java@v4
+        uses: actions/setup-java@7df39855c9bb01081c3c0e1f2d1e010b7f15c8af
         with:
           distribution: temurin
           java-version: 17
 
       - name: Cache Gradle packages
-        uses: actions/cache@v4
+        uses: actions/cache@0b6d802c209d287ad839eca09820c0eac11b887b
         with:
           path: |
             ~/.gradle/caches
@@ -31,33 +31,17 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: Grant execute permission for Gradle wrapper
-        run: chmod +x gradlew
-
-      - name: Build and run tests (skip Spotless)
-        # runs tests and builds all modules so classes exist
+      - name: Build with Gradle (run tests and skip Spotless)
         run: ./gradlew test build -x spotlessCheck -x spotlessJavaCheck
 
-      - name: Find compiled class directories (debug + prepare list)
-        id: gather-binaries
-        run: |
-          echo "::group::List of build/classes directories (if any)"
-          find . -type d -path "*/build/classes/*" -print || true
-          echo "::endgroup::"
-          # Build a comma-separated list of directories for sonar.java.binaries
-          BINARIES=$(find . -type d -path "*/build/classes/*" -printf '%p,' | sed 's/,$//')
-          # If none found, leave empty but continue so logs show nothing
-          echo "binaries=$BINARIES" >> $GITHUB_OUTPUT
-        shell: bash
-
-      - name: SonarCloud Scan (Java 17 compatible)
-        uses: cb9f6b7020d8d7a616cf4f7b948ee933e98294e0
+      - name: SonarCloud Scan (multi-module Gradle)
+        uses: sonarsource/sonarcloud-github-action@cb9f6b7020d8d7a616cf4f7b948ee933e98294e0
         with:
           projectBaseDir: .
           args: >
             -Dsonar.projectKey=Dhruvilshah00_moshi
             -Dsonar.organization=dhruvilshah00
-            -Dsonar.java.binaries=${{ steps.gather-binaries.outputs.binaries }}
+            -Dsonar.java.binaries=**/build/classes/**
             -Dsonar.junit.reportPaths=**/build/test-results/test
             -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/test/jacocoTestReport.xml
         env:
