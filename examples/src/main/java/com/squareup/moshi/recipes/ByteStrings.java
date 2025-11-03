@@ -13,7 +13,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package com.squareup.moshi.recipes;
 
 import com.squareup.moshi.JsonAdapter;
@@ -21,30 +20,22 @@ import com.squareup.moshi.JsonReader;
 import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import java.io.IOException;
-import java.util.logging.Logger;
 import okio.ByteString;
 
-
 public final class ByteStrings {
-
-  // Add a logger for this class
-  private static final Logger logger = Logger.getLogger(ByteStrings.class.getName());
-
   public void run() throws Exception {
     String json = "\"TW9zaGksIE9saXZlLCBXaGl0ZSBDaGluPw\"";
 
     Moshi moshi = new Moshi.Builder().add(ByteString.class, new Base64ByteStringAdapter()).build();
     JsonAdapter<ByteString> jsonAdapter = moshi.adapter(ByteString.class);
+
     ByteString byteString = jsonAdapter.fromJson(json);
-
-
-    // New (SonarQube-compliant)
-    logger.info(byteString.toString());
+    System.out.println(byteString);
   }
 
   /**
-   * Formats byte strings using <a href="http://www.ietf.org/rfc/rfc2045.txt">Base64</a>.
-   * No line breaks or whitespace is included in the encoded form.
+   * Formats byte strings using <a href="http://www.ietf.org/rfc/rfc2045.txt">Base64</a>. No line
+   * breaks or whitespace is included in the encoded form.
    */
   public final class Base64ByteStringAdapter extends JsonAdapter<ByteString> {
     @Override
