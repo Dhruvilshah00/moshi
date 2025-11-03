@@ -64,8 +64,8 @@ public final class DefaultOnDataMismatchAdapter<T> extends JsonAdapter<T> {
       public @Nullable JsonAdapter<?> create(
           Type requestedType, Set<? extends Annotation> annotations, Moshi moshi) {
         if (type != requestedType) return null;
-        JsonAdapter<T> delegate = moshi.nextAdapter(this, type, annotations);
-        return new DefaultOnDataMismatchAdapter<>(delegate, defaultValue);
+        JsonAdapter<T> adapterDelegate = moshi.nextAdapter(this, type, annotations);
+        return new DefaultOnDataMismatchAdapter<>(adapterDelegate, defaultValue);
       }
     };
   }
