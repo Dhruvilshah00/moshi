@@ -51,7 +51,7 @@ jobs:
         shell: bash
 
       - name: SonarCloud Scan (Java 17 compatible)
-        uses: sonarsource/sonarcloud-github-action@v2
+        uses: cb9f6b7020d8d7a616cf4f7b948ee933e98294e0
         with:
           projectBaseDir: .
           args: >
