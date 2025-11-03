@@ -31,8 +31,24 @@ jobs:
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: ${{ runner.os }}-gradle-
 
-      - name: Build with Gradle (skip Spotless)
-        run: ./gradlew test build -x test -x spotlessCheck -x spotlessJavaCheck
+      - name: Grant execute permission for Gradle wrapper
+        run: chmod +x gradlew
+
+      - name: Build and run tests (skip Spotless)
+        # runs tests and builds all modules so classes exist
+        run: ./gradlew test build -x spotlessCheck -x spotlessJavaCheck
+
+      - name: Find compiled class directories (debug + prepare list)
+        id: gather-binaries
+        run: |
+          echo "::group::List of build/classes directories (if any)"
+          find . -type d -path "*/build/classes/*" -print || true
+          echo "::endgroup::"
+          # Build a comma-separated list of directories for sonar.java.binaries
+          BINARIES=$(find . -type d -path "*/build/classes/*" -printf '%p,' | sed 's/,$//')
+          # If none found, leave empty but continue so logs show nothing
+          echo "binaries=$BINARIES" >> $GITHUB_OUTPUT
+        shell: bash
 
       - name: SonarCloud Scan (Java 17 compatible)
         uses: sonarsource/sonarcloud-github-action@v2
@@ -41,7 +57,7 @@ jobs:
           args: >
             -Dsonar.projectKey=Dhruvilshah00_moshi
             -Dsonar.organization=dhruvilshah00
-            -Dsonar.java.binaries=build/classes/java/main,moshi/build/classes/java/main,moshi-adapters/build/classes/java/main,moshi-kotlin/build/classes/java/main,moshi-reflect/build/classes/java/main
+            -Dsonar.java.binaries=${{ steps.gather-binaries.outputs.binaries }}
             -Dsonar.junit.reportPaths=**/build/test-results/test
             -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/test/jacocoTestReport.xml
         env:
