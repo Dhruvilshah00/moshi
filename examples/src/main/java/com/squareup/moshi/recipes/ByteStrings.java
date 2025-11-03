@@ -21,7 +21,6 @@ import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import java.io.IOException;
 import okio.ByteString;
-import java.io.IOException;
 import java.util.logging.Logger;
 
 public final class ByteStrings {
