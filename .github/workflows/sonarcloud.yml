@@ -2,7 +2,7 @@ name: CI - Build and SonarCloud
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
   pull_request:
     types: [opened, synchronize, reopened]
 
@@ -22,16 +22,14 @@ jobs:
           distribution: temurin
           java-version: 17
 
-      - name: Grant execute permission for Gradle wrapper
-        run: chmod +x gradlew
-
       - name: Cache Gradle packages
         uses: actions/cache@v4
         with:
-          path: ~/.gradle/caches
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
           key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
+          restore-keys: ${{ runner.os }}-gradle-
 
       - name: Build with Gradle (skip Spotless)
         run: ./gradlew build -x test -x spotlessCheck -x spotlessJavaCheck
@@ -43,6 +41,8 @@ jobs:
           args: >
             -Dsonar.projectKey=Dhruvilshah00_moshi
             -Dsonar.organization=dhruvilshah00
-            -Dsonar.java.binaries=build/classes
+            -Dsonar.java.binaries=build/classes/java/main
+            -Dsonar.junit.reportPaths=build/test-results/test
+            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
