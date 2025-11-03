@@ -5,7 +5,6 @@ import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 plugins {
   kotlin("jvm")
   id("com.google.devtools.ksp") apply false
-  id("jacoco")
 }
 
 enum class TestMode {
@@ -20,21 +19,17 @@ val testMode =
     ?: REFLECT
 
 when (testMode) {
-  REFLECT -> { /* Do nothing */ }
-  KSP -> { apply(plugin = "com.google.devtools.ksp") }
+  REFLECT -> {
+    // Do nothing!
+  }
+  KSP -> {
+    apply(plugin = "com.google.devtools.ksp")
+  }
 }
 
 tasks.withType<Test>().configureEach {
+  // ExtendsPlatformClassWithProtectedField tests a case where we set a protected ByteArrayOutputStream.buf field
   jvmArgs("--add-opens=java.base/java.io=ALL-UNNAMED")
-  finalizedBy(tasks.jacocoTestReport)
-}
-
-tasks.jacocoTestReport {
-  dependsOn(tasks.test)
-  reports {
-    xml.required.set(true)
-    html.required.set(true)
-  }
 }
 
 tasks.withType<KotlinCompile>().configureEach {
@@ -49,8 +44,12 @@ tasks.withType<KotlinCompile>().configureEach {
 
 dependencies {
   when (testMode) {
-    REFLECT -> {}
-    KSP -> { "kspTest"(project(":moshi-kotlin-codegen")) }
+    REFLECT -> {
+      // Do nothing
+    }
+    KSP -> {
+      "kspTest"(project(":moshi-kotlin-codegen"))
+    }
   }
   testImplementation(project(":moshi"))
   testImplementation(project(":moshi-kotlin"))
