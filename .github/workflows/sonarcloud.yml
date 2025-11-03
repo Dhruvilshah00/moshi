@@ -44,3 +44,4 @@ jobs:
             -Dsonar.organization=dhruvilshah00
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_SCANNER_OPTS: "-Djava.home=/usr/lib/jvm/java-17-openjdk-amd64"
