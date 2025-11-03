@@ -32,7 +32,7 @@ jobs:
           restore-keys: ${{ runner.os }}-gradle-
 
       - name: Build with Gradle (skip Spotless)
-        run: ./gradlew build -x test -x spotlessCheck -x spotlessJavaCheck
+        run: ./gradlew test build -x test -x spotlessCheck -x spotlessJavaCheck
 
       - name: SonarCloud Scan (Java 17 compatible)
         uses: sonarsource/sonarcloud-github-action@v2
@@ -41,8 +41,8 @@ jobs:
           args: >
             -Dsonar.projectKey=Dhruvilshah00_moshi
             -Dsonar.organization=dhruvilshah00
-            -Dsonar.java.binaries=build/classes/java/main
-            -Dsonar.junit.reportPaths=build/test-results/test
-            -Dsonar.coverage.jacoco.xmlReportPaths=build/reports/jacoco/test/jacocoTestReport.xml
+            -Dsonar.java.binaries=build/classes/java/main,moshi/build/classes/java/main,moshi-adapters/build/classes/java/main,moshi-kotlin/build/classes/java/main,moshi-reflect/build/classes/java/main
+            -Dsonar.junit.reportPaths=**/build/test-results/test
+            -Dsonar.coverage.jacoco.xmlReportPaths=**/build/reports/jacoco/test/jacocoTestReport.xml
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
