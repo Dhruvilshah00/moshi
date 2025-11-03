@@ -36,9 +36,10 @@ jobs:
       - name: Build with Gradle (skip Spotless)
         run: ./gradlew build -x test -x spotlessCheck -x spotlessJavaCheck
 
-      - name: SonarCloud Scan
-        uses: sonarsource/sonarcloud-github-action@v1.9
+      - name: SonarCloud Scan (Java 17 compatible)
+        uses: sonarsource/sonarcloud-github-action@v2
         with:
+          projectBaseDir: .
           args: >
             -Dsonar.projectKey=Dhruvilshah00_moshi
             -Dsonar.organization=dhruvilshah00
