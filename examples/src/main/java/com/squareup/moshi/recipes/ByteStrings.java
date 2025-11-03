@@ -21,18 +21,20 @@ import com.squareup.moshi.JsonWriter;
 import com.squareup.moshi.Moshi;
 import java.io.IOException;
 import okio.ByteString;
+import java.io.IOException;
+import java.util.logging.Logger;
 
 public final class ByteStrings {
   public void run() throws Exception {
     String json = "\"TW9zaGksIE9saXZlLCBXaGl0ZSBDaGluPw\"";
 
     Moshi moshi = new Moshi.Builder()
-        .add(ByteString.class, new Base64ByteStringAdapter())
-        .build();
+      .add(ByteString.class, new Base64ByteStringAdapter())
+      .build();
     JsonAdapter<ByteString> jsonAdapter = moshi.adapter(ByteString.class);
 
     ByteString byteString = jsonAdapter.fromJson(json);
-    System.out.println(byteString);
+    logger.info(byteString.toString());
   }
 
   /**
