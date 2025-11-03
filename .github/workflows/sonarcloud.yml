@@ -42,6 +42,6 @@ jobs:
           args: >
             -Dsonar.projectKey=Dhruvilshah00_moshi
             -Dsonar.organization=dhruvilshah00
+            -Dsonar.java.binaries=build/classes
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
-          SONAR_SCANNER_OPTS: "-Djava.home=/usr/lib/jvm/java-17-openjdk-amd64"
