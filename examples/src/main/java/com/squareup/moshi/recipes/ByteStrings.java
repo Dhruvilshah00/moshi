@@ -24,6 +24,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 import okio.ByteString;
 
+
 public final class ByteStrings {
 
   // Add a logger for this class
@@ -36,8 +37,6 @@ public final class ByteStrings {
     JsonAdapter<ByteString> jsonAdapter = moshi.adapter(ByteString.class);
     ByteString byteString = jsonAdapter.fromJson(json);
 
-    // Old:
-    // System.out.println(byteString);
 
     // New (SonarQube-compliant)
     logger.info(byteString.toString());
