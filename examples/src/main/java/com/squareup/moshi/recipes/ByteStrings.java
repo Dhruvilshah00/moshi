@@ -25,6 +25,7 @@ import java.io.IOException;
 import java.util.logging.Logger;
 
 public final class ByteStrings {
+  private static final Logger logger = Logger.getLogger(ByteStrings.class.getName());
   public void run() throws Exception {
     String json = "\"TW9zaGksIE9saXZlLCBXaGl0ZSBDaGluPw\"";
 
