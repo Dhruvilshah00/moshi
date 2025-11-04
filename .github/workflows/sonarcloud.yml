@@ -58,6 +58,5 @@ jobs:
             -Dsonar.projectKey=Dhruvilshah00_moshi
             -Dsonar.organization=dhruvilshah00
             -Dsonar.java.binaries=${{ steps.gather-binaries.outputs.binaries }}
-            -Dsonar.junit.reportPaths=**/build/test-results/test
         env:
           SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
