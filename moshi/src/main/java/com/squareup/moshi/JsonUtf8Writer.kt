@@ -323,7 +323,7 @@ internal class JsonUtf8Writer(
 
       JsonScope.STREAMING_VALUE -> throw IllegalStateException("Sink from valueSink() was not closed")
 
-      else -> throw IllegalStateException(NESTING_PROBLEM_MESSAGE)
+      else -> error(NESTING_PROBLEM_MESSAGE)
     }
     replaceTop(nextTop)
   }
