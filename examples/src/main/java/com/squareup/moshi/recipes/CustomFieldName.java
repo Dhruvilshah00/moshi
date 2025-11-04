@@ -18,8 +18,13 @@ package com.squareup.moshi.recipes;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.recipes.models.Player;
+import java.util.logging.Logger;
 
 public final class CustomFieldName {
+
+  // Declare a static logger instance for this class
+  private static final Logger logger = Logger.getLogger(CustomFieldName.class.getName());
+
   public void run() throws Exception {
     String json = "" + "{" + "  \"username\": \"jesse\"," + "  \"lucky number\": 32" + "}\n";
 
@@ -27,10 +32,16 @@ public final class CustomFieldName {
     JsonAdapter<Player> jsonAdapter = moshi.adapter(Player.class);
 
     Player player = jsonAdapter.fromJson(json);
-    System.out.println(player);
+
+    //  Used logger instead of System.out.println()
+    logger.info(player.toString());
   }
 
   public static void main(String[] args) throws Exception {
     new CustomFieldName().run();
   }
 }
+
+
+
+

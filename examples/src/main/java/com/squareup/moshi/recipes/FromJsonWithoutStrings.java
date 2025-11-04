@@ -16,11 +16,17 @@
 package com.squareup.moshi.recipes;
 
 import com.squareup.moshi.FromJson;
+import com.squareup.moshi.Json;
 import com.squareup.moshi.JsonAdapter;
 import com.squareup.moshi.Moshi;
 import com.squareup.moshi.ToJson;
+import java.util.logging.Logger;
 
 public final class FromJsonWithoutStrings {
+
+  private static final Logger LOGGER =
+      Logger.getLogger(FromJsonWithoutStrings.class.getName());
+
   public void run() throws Exception {
     // For some reason our JSON has date and time as separate fields. We will clean that up during
     // parsing: Moshi will first parse the JSON directly to an EventJson and from that the
@@ -37,8 +43,8 @@ public final class FromJsonWithoutStrings {
     JsonAdapter<Event> jsonAdapter = moshi.adapter(Event.class);
 
     Event event = jsonAdapter.fromJson(json);
-    System.out.println(event);
-    System.out.println(jsonAdapter.toJson(event));
+    LOGGER.info(event.toString());
+    LOGGER.info(jsonAdapter.toJson(event));
   }
 
   public static void main(String[] args) throws Exception {
@@ -47,7 +53,10 @@ public final class FromJsonWithoutStrings {
 
   private static final class EventJson {
     String title;
-    String begin_date;
+
+    @Json(name = "begin_date")
+    String beginDate;
+
     String begin_time;
   }
 
@@ -73,7 +82,7 @@ public final class FromJsonWithoutStrings {
     Event eventFromJson(EventJson eventJson) {
       Event event = new Event();
       event.title = eventJson.title;
-      event.beginDateAndTime = eventJson.begin_date + " " + eventJson.begin_time;
+      event.beginDateAndTime = eventJson.beginDate + " " + eventJson.begin_time;
       return event;
     }
 
@@ -81,7 +90,7 @@ public final class FromJsonWithoutStrings {
     EventJson eventToJson(Event event) {
       EventJson json = new EventJson();
       json.title = event.title;
-      json.begin_date = event.beginDateAndTime.substring(0, 8);
+      json.beginDate = event.beginDateAndTime.substring(0, 8);
       json.begin_time = event.beginDateAndTime.substring(9, 14);
       return json;
     }

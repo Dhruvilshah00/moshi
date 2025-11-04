@@ -27,21 +27,24 @@ import java.lang.reflect.Type;
 import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Logger;
 import javax.annotation.Nullable;
 
 public final class CustomAdapterFactory {
+
+  private static final Logger LOGGER =
+      Logger.getLogger(CustomAdapterFactory.class.getName());
+
   public void run() throws Exception {
     Moshi moshi = new Moshi.Builder().add(new SortedSetAdapterFactory()).build();
     JsonAdapter<SortedSet<String>> jsonAdapter =
         moshi.adapter(Types.newParameterizedType(SortedSet.class, String.class));
-
     TreeSet<String> model = new TreeSet<>();
     model.add("a");
     model.add("b");
     model.add("c");
-
     String json = jsonAdapter.toJson(model);
-    System.out.println(json);
+    LOGGER.info(json); // replaced System.out.println(json);
   }
 
   /**
@@ -91,19 +94,15 @@ public final class CustomAdapterFactory {
       if (!annotations.isEmpty()) {
         return null; // Annotations? This factory doesn't apply.
       }
-
       if (!(type instanceof ParameterizedType)) {
         return null; // No type parameter? This factory doesn't apply.
       }
-
       ParameterizedType parameterizedType = (ParameterizedType) type;
       if (parameterizedType.getRawType() != SortedSet.class) {
         return null; // Not a sorted set? This factory doesn't apply.
       }
-
       Type elementType = parameterizedType.getActualTypeArguments()[0];
       JsonAdapter<Object> elementAdapter = moshi.adapter(elementType);
-
       return new SortedSetAdapter<>(elementAdapter).nullSafe();
     }
   }
