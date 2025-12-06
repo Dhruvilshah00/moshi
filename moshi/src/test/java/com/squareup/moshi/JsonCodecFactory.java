@@ -32,8 +32,9 @@ abstract class JsonCodecFactory {
 
           @Override
           public JsonReader newReader(String json) {
-            Buffer buffer = new Buffer().writeUtf8(json);
-            return JsonReader.of(buffer);
+            //changed the name from buffer to tempBuffer
+            Buffer tempBuffer = new Buffer().writeUtf8(json);
+            return JsonReader.of(tempBuffer);
           }
 
           @Override

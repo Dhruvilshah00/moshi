@@ -94,7 +94,7 @@ internal class JsonUtf8Writer(
   /** Closes the current scope by appending any necessary whitespace and the given bracket. */
   private fun close(empty: Int, nonempty: Int, closeBracket: Char): JsonWriter {
     val context = peekScope()
-    check(context == nonempty || context == empty) { "Nesting problem." }
+    check(context == nonempty || context == empty) { NESTING_PROBLEM_MESSAGE }
     check(deferredName == null) { "Dangling name: $deferredName" }
     if (stackSize == flattenStackSize.inv()) {
       // Cancel this close. Restore the flattenStackSize so we're ready to flatten again!
@@ -120,7 +120,7 @@ internal class JsonUtf8Writer(
         deferredName != null ||
         promoteValueToName
       )
-    check(isWritingObject) { "Nesting problem." }
+    check(isWritingObject) { NESTING_PROBLEM_MESSAGE }
     deferredName = name
     pathNames[stackSize - 1] = name
     return this
@@ -283,10 +283,7 @@ internal class JsonUtf8Writer(
     if (context == JsonScope.NONEMPTY_OBJECT) { // first in object
       sink.writeByte(','.code)
     } else {
-      check(context == JsonScope.EMPTY_OBJECT) {
-        // not in an object!
-        "Nesting problem."
-      }
+      check(context == JsonScope.EMPTY_OBJECT) { NESTING_PROBLEM_MESSAGE }
     }
     newline()
     replaceTop(JsonScope.DANGLING_NAME)
@@ -326,7 +323,7 @@ internal class JsonUtf8Writer(
 
       JsonScope.STREAMING_VALUE -> throw IllegalStateException("Sink from valueSink() was not closed")
 
-      else -> throw IllegalStateException("Nesting problem.")
+      else -> error(NESTING_PROBLEM_MESSAGE)
     }
     replaceTop(nextTop)
   }
@@ -343,6 +340,8 @@ internal class JsonUtf8Writer(
      * error. http://code.google.com/p/google-gson/issues/detail?id=341
      */
     private val REPLACEMENT_CHARS: Array<String?> = arrayOfNulls(128)
+    private const val NESTING_PROBLEM_MESSAGE = "Nesting problem."
+
 
     init {
       for (i in 0..0x1f) {

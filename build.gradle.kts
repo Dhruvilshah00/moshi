@@ -20,6 +20,7 @@ buildscript {
 }
 
 plugins {
+  id("jacoco")
   alias(libs.plugins.mavenPublish) apply false
   alias(libs.plugins.dokka)
   alias(libs.plugins.spotless)
@@ -55,7 +56,6 @@ spotless {
     ktlint(libs.ktlint.get().version).editorConfigOverride(
       mapOf(
         "ktlint_standard_filename" to "disabled",
-        // Making something an expression body should be a choice around readability.
         "ktlint_standard_function-expression-body" to "disabled",
       ),
     )
@@ -173,6 +173,25 @@ subprojects {
           }
         }
       }
+    }
+  }
+
+  plugins.withId("jacoco") {
+    tasks.register<JacocoReport>("jacocoTestReport") {
+      dependsOn(tasks.withType<Test>())
+
+      reports {
+        xml.required.set(true)
+        html.required.set(true)
+      }
+
+      // Include all main classes
+      val javaClasses = fileTree("${project.buildDir}/classes/java/main")
+      val kotlinClasses = fileTree("${project.buildDir}/classes/kotlin/main")
+
+      classDirectories.setFrom(files(javaClasses, kotlinClasses))
+      sourceDirectories.setFrom(files("src/main/java", "src/main/kotlin"))
+      executionData.setFrom(fileTree(buildDir).include("**/jacoco/test.exec"))
     }
   }
 }
