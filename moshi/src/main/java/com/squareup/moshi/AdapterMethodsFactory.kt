@@ -321,14 +321,19 @@ internal class AdapterMethodsFactory(
     private val adaptersOffset: Int,
     type: Type,
     parameterCount: Int,
-    val annotations: Set<Annotation>,
+    annotations: Set<Annotation>,
     val adapter: Any,
     val method: Method,
     val nullable: Boolean,
   ) {
-    val type = type.canonicalize()
-    private val jsonAdapters: Array<JsonAdapter<*>?> = arrayOfNulls(parameterCount - adaptersOffset)
+    private val internalAnnotations: Set<Annotation> = annotations.toSet()
 
+    val annotations: Set<Annotation>
+      get() = internalAnnotations.toSet()
+
+    val type = type.canonicalize()
+    private val jsonAdapters: Array<JsonAdapter<*>?> =
+      arrayOfNulls(parameterCount - adaptersOffset)
     open fun bind(moshi: Moshi, factory: JsonAdapter.Factory) {
       if (jsonAdapters.isNotEmpty()) {
         val parameterTypes = method.genericParameterTypes
@@ -345,9 +350,7 @@ internal class AdapterMethodsFactory(
         }
       }
     }
-
     open fun toJson(moshi: Moshi, writer: JsonWriter, value: Any?): Unit = throw AssertionError()
-
     open fun fromJson(moshi: Moshi, reader: JsonReader): Any? = throw AssertionError()
 
     /** Invoke the method with one fixed argument, plus any number of JSON adapter arguments. */
