@@ -396,15 +396,15 @@ internal class JsonValueReader : JsonReader {
 
   internal class JsonIterator(
     val endToken: Token,
-    val array: Array<Any?>,
-    var next: Int,
+    private val array: Array<Any?>,
+    private var next: Int,
   ) : Iterator<Any?>,
     Cloneable {
     override fun hasNext() = next < array.size
 
     override fun next() = array[next++]
 
-    // No need to copy the array; it's read-only.
+    // No need to copy the array; it's read-only from outside this class.
     public override fun clone() = JsonIterator(endToken, array, next)
   }
 }
