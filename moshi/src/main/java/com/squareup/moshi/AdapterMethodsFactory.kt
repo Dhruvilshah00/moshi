@@ -28,9 +28,14 @@ import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
 
 internal class AdapterMethodsFactory(
-  private val toAdapters: List<AdapterMethod>,
-  private val fromAdapters: List<AdapterMethod>,
+  toAdapters: List<AdapterMethod>,
+  fromAdapters: List<AdapterMethod>,
 ) : JsonAdapter.Factory {
+
+  // Defensive copies to avoid exposing internal representation
+  private val toAdapters: List<AdapterMethod> = toAdapters.toList()
+  private val fromAdapters: List<AdapterMethod> = fromAdapters.toList()
+
   override fun create(
     type: Type,
     annotations: Set<Annotation>,
@@ -111,7 +116,7 @@ internal class AdapterMethodsFactory(
             val toAdapter = toAdapter(adapter, declaredMethod)
             val conflicting = get(toAdapters, toAdapter.type, toAdapter.annotations)
             checkNull(conflicting) {
-              "Conflicting @ToJson methods:\n    ${it.method}\n    ${toAdapter.method}"
+              "Conflicting @ToJson methods:\n    ${it.methodDescription}\n    ${toAdapter.methodDescription}"
             }
             toAdapters.add(toAdapter)
           }
@@ -119,7 +124,7 @@ internal class AdapterMethodsFactory(
             val fromAdapter = fromAdapter(adapter, declaredMethod)
             val conflicting = get(fromAdapters, fromAdapter.type, fromAdapter.annotations)
             checkNull(conflicting) {
-              "Conflicting @FromJson methods:\n    ${it.method}\n    ${fromAdapter.method}"
+              "Conflicting @FromJson methods:\n    ${it.methodDescription}\n    ${fromAdapter.methodDescription}"
             }
             fromAdapters.add(fromAdapter)
           }
@@ -323,7 +328,7 @@ internal class AdapterMethodsFactory(
     parameterCount: Int,
     annotations: Set<Annotation>,
     val adapter: Any,
-    val method: Method,
+    private val method: Method,
     val nullable: Boolean,
   ) {
     private val internalAnnotations: Set<Annotation> = annotations.toSet()
@@ -334,6 +339,10 @@ internal class AdapterMethodsFactory(
     val type = type.canonicalize()
     private val jsonAdapters: Array<JsonAdapter<*>?> =
       arrayOfNulls(parameterCount - adaptersOffset)
+
+    internal val methodDescription: String
+      get() = method.toString()
+
     open fun bind(moshi: Moshi, factory: JsonAdapter.Factory) {
       if (jsonAdapters.isNotEmpty()) {
         val parameterTypes = method.genericParameterTypes
