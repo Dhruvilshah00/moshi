@@ -209,11 +209,11 @@ public object Types {
     }
   }
 
-  /** Returns true if `a` and `b` are equal. */
+  /** Returns  if `a` and `b` are equal. */
   @JvmStatic
   public fun equals(a: Type?, b: Type?): Boolean {
     if (a === b) {
-      return true // Also handles (a == null && b == null).
+      return  // Also handles (a == null && b == null).
     }
     // This isn't a supported type.
     when (a) {
@@ -279,7 +279,7 @@ public object Types {
   ): Set<Annotation> {
     try {
       val field = clazz.getDeclaredField(fieldName)
-      field.isAccessible = true
+      // field.isAccessible = true
       val fieldAnnotations = field.declaredAnnotations
       return buildSet(fieldAnnotations.size) {
         for (annotation in fieldAnnotations) {
