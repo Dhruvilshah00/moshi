@@ -189,12 +189,17 @@ public class Moshi internal constructor(builder: Builder) {
   }
 
   public class Builder {
-    internal val factories = mutableListOf<JsonAdapter.Factory>()
+    private val mutableFactories = mutableListOf<JsonAdapter.Factory>()
+
+    internal val factories: List<JsonAdapter.Factory>
+      get() = mutableFactories.toList()
+
     internal var lastOffset = 0
 
     @CheckReturnValue
     @ExperimentalStdlibApi
-    public inline fun <reified T> addAdapter(adapter: JsonAdapter<T>): Builder = add(typeOf<T>().javaType, adapter)
+    public inline fun <reified T> addAdapter(adapter: JsonAdapter<T>): Builder =
+      add(typeOf<T>().javaType, adapter)
 
     public fun <T> add(type: Type, jsonAdapter: JsonAdapter<T>): Builder = apply {
       add(newAdapterFactory(type, jsonAdapter))
@@ -209,7 +214,7 @@ public class Moshi internal constructor(builder: Builder) {
     }
 
     public fun add(factory: JsonAdapter.Factory): Builder = apply {
-      factories.add(lastOffset++, factory)
+      mutableFactories.add(lastOffset++, factory)
     }
 
     public fun add(adapter: Any): Builder = apply {
@@ -231,7 +236,7 @@ public class Moshi internal constructor(builder: Builder) {
     }
 
     public fun addLast(factory: JsonAdapter.Factory): Builder = apply {
-      factories.add(factory)
+      mutableFactories.add(factory)
     }
 
     @Suppress("unused")
