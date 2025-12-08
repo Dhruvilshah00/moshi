@@ -224,7 +224,7 @@ public object Types {
           // Class instance with generic info, from method return types
           return a.typeParameters.flatMap { it.bounds.toList() } == b.actualTypeArguments.toList()
         } else {
-          a == b // Class already specifies equals().
+          return a == b // Class already specifies equals().
         }
       }
 
