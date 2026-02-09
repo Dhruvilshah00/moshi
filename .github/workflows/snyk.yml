@@ -1,0 +1,24 @@
+name: Snyk Security Scan
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  snyk:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      - name: Authenticate
+        run: snyk auth ${{ secrets.SNYK_TOKEN }}
+
+      - name: Scan all modules
+        run: snyk test --all-projects --all-sub-projects
+
+      - name: Upload results
+        run: snyk monitor --all-projects --all-sub-projects
