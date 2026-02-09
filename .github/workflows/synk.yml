@@ -1,0 +1,27 @@
+name: Snyk Security Scan
+
+on:
+  push:
+  pull_request:
+
+jobs:
+  snyk:
+    runs-on: ubuntu-latest
+
+    env:
+      SNYK_TOKEN: ${{ secrets.SNYK_TOKEN }}
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Install Snyk
+        run: npm install -g snyk
+
+      - name: Authenticate Snyk
+        run: snyk auth $SNYK_TOKEN
+
+      - name: Scan all Gradle subprojects
+        run: snyk test --all-sub-projects
+
+      - name: Upload results to Snyk dashboard
+        run: snyk monitor --all-sub-projects
